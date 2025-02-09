@@ -1,0 +1,2 @@
+def findNumbers(nums):
+    return sum(len(str(n))%2==0 for n in nums)
