@@ -25,5 +25,5 @@ Example 2:
 
 Constraints:
 
-1 <= nums.length <= 500
-1 <= nums[i] <= 105
+- 1 <= nums.length <= 500
+- 1 <= nums[i] <= 105
