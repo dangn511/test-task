@@ -1,2 +1,4 @@
+```python
 def findNumbers(nums):
-    return sum(len(str(n))%2==0 for n in nums)
+    return sum(1 for num in nums if len(str(num)) % 2 == 0)
+```
