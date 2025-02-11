@@ -1,4 +1,4 @@
-Language to use: Javascript
+Language to use: C++
 
 Write a program to solve a Sudoku puzzle by filling the empty cells.
 
