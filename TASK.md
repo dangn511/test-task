@@ -1,4 +1,6 @@
-Write a program using Javascript to solve a Sudoku puzzle by filling the empty cells.
+Language to use: Javascript
+
+Write a program to solve a Sudoku puzzle by filling the empty cells.
 
 A sudoku solution must satisfy all of the following rules:
 
