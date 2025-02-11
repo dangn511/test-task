@@ -1,57 +1,48 @@
 ```cpp
 #include <iostream>
 #include <vector>
-#include <unordered_set>
 
 using namespace std;
 
-class SudokuSolver {
+class Solution {
 public:
     void solveSudoku(vector<vector<char>>& board) {
         solve(board);
     }
 
 private:
-    // Function to check if placing num at (row, col) is valid
-    bool isValid(const vector<vector<char>>& board, int row, int col, char num) {
+    bool solve(vector<vector<char>>& board) {
+        for (int i = 0; i < 9; ++i) {
+            for (int j = 0; j < 9; ++j) {
+                if (board[i][j] == '.') {
+                    for (char num = '1'; num <= '9'; ++num) {
+                        if (isValid(board, i, j, num)) {
+                            board[i][j] = num; // Place the number
+                            if (solve(board)) {
+                                return true; // Recursively continue to solve
+                            }
+                            board[i][j] = '.'; // Reset and backtrack
+                        }
+                    }
+                    return false; // No valid number found, need to backtrack
+                }
+            }
+        }
+        return true; // Solved the entire board
+    }
+
+    bool isValid(vector<vector<char>>& board, int row, int col, char num) {
         for (int i = 0; i < 9; ++i) {
             // Check the row and column
             if (board[row][i] == num || board[i][col] == num) {
                 return false;
             }
-            // Check the 3x3 box
+            // Check the 3x3 sub-box
             if (board[3 * (row / 3) + i / 3][3 * (col / 3) + i % 3] == num) {
                 return false;
             }
         }
-        return true;
-    }
-
-    // Backtracking function to solve the Sudoku
-    bool solve(vector<vector<char>>& board) {
-        for (int row = 0; row < 9; ++row) {
-            for (int col = 0; col < 9; ++col) {
-                // Find an empty cell
-                if (board[row][col] == '.') {
-                    for (char num = '1'; num <= '9'; ++num) {
-                        // Check if it's valid to place num here
-                        if (isValid(board, row, col, num)) {
-                            board[row][col] = num; // Place the number
-
-                            // Recursively attempt to solve the rest of the board
-                            if (solve(board)) {
-                                return true; // Solution found
-                            }
-
-                            // Backtrack
-                            board[row][col] = '.'; // Reset on backtrack
-                        }
-                    }
-                    return false; // No valid number found, triggers backtrack
-                }
-            }
-        }
-        return true; // Solution found
+        return true; // The number is valid
     }
 };
 
@@ -68,13 +59,13 @@ int main() {
         {'.', '.', '.', '.', '8', '.', '.', '7', '9'}
     };
 
-    SudokuSolver solver;
-    solver.solveSudoku(board);
+    Solution sol;
+    sol.solveSudoku(board);
 
     // Output the solved board
     for (const auto& row : board) {
-        for (const char& cell : row) {
-            cout << cell << " ";
+        for (char c : row) {
+            cout << c << " ";
         }
         cout << endl;
     }
