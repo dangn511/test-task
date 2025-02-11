@@ -1,48 +1,57 @@
-```Javascript
-function isValid(board, row, col, num) {
-    for(let x = 0; x < 9; x++) {
-        const m = 3 * Math.floor(row / 3) + Math.floor(x / 3);
-        const n = 3 * Math.floor(col / 3) + x % 3;
-        if(board[row][x] == num || board[x][col] == num || board[m][n] == num) {
-            return false;
-        }
-    }
-    return true;
-}
-
-function solve(board) {
-    for(let i = 0; i < 9; i++) {
-        for(let j = 0; j < 9; j++) {
-            if(board[i][j] == '.') {
-                for(let num = 1; num <= 9; num++) {
-                    if(isValid(board, i ,j, num)) {
-                        board[i][j] = ''+num;
-                        if(solve(board)) {
-                            return true;
-                        }
-                        board[i][j] = '.';
-                    }
-                }
-                return false;
+```javascript
+// Function to solve Sudoku
+function solveSudoku(board) {
+  // Iterate through the board
+  for (let i = 0; i < 9; i++) {
+    for (let j = 0; j < 9; j++) {
+      // If current cell is empty '.'
+      if (board[i][j] === '.') {
+        // Try digits from 1 to 9
+        for (let k = 1; k <= 9; k++) {
+          // If k is valid in the current cell
+          if (isValid(board, i, j, String(k))) {
+            // Assign k to the current cell
+            board[i][j] = String(k);
+            // Move to next cell
+            if (solveSudoku(board)) {
+              return true;
             }
+            // If not a solution, reset the cell
+            board[i][j] = '.';
+          }
         }
+        return false;
+      }
     }
-    return true;
+  }
+  return true;
 }
 
-// Use solve function to the sudoku puzzle and modify the existing matrix.
-// input
-let board = [
-    ["5","3",".",".","7",".",".",".","."],
-    ["6",".",".","1","9","5",".",".","."],
-    [".","9","8",".",".",".",".","6","."],
-    ["8",".",".",".","6",".",".",".","3"],
-    ["4",".",".","8",".","3",".",".","1"],
-    ["7",".",".",".","2",".",".",".","6"],
-    [".","6",".",".",".",".","2","8","."],
-    [".",".",".","4","1","9",".",".","5"],
-    [".",".",".",".","8",".",".","7","9"]
-    ];
-solve(board);
-console.log(board);
+// Helper function to check if n is valid in the cell at the ith row and jth column
+function isValid(board, row, col, n) {
+  // Check the row
+  for (let i = 0; i < 9; i++) {
+    if (board[i][col] === n) {
+      return false;
+    }
+  }
+  // Check the column
+  for (let j = 0; j < 9; j++) {
+    if (board[row][j] === n) {
+      return false;
+    }
+  }
+  // Check the square box
+  let startRow = 3 * Math.floor(row / 3);
+  let startCol = 3 * Math.floor(col / 3);
+  for (let i = 0; i < 3; i++) {
+    for (let j = 0; j < 3; j++) {
+      if (board[i + startRow][j + startCol] === n) {
+        return false;
+      }
+    }
+  }
+  // N is valid in the cell
+  return true;
+}
 ```
