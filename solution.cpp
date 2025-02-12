@@ -1,66 +1,65 @@
 ```cpp
-#include <vector>
-#include <string>
 #include <iostream>
+#include <vector>
+
+using namespace std;
 
 class Solution {
 public:
-    void solveSudoku(std::vector<std::vector<char>>& board) {
+    void solveSudoku(vector<vector<char>>& board) {
         solve(board);
     }
 
 private:
-    // Function to check if placing 'num' in board[row][col] is valid
-    bool isValid(const std::vector<std::vector<char>>& board, int row, int col, char num) {
+    // Function to solve the Sudoku using backtracking
+    bool solve(vector<vector<char>>& board) {
+        for (int row = 0; row < 9; ++row) {
+            for (int col = 0; col < 9; ++col) {
+                // Check for empty cell
+                if (board[row][col] == '.') {
+                    // Try placing digits 1-9
+                    for (char num = '1'; num <= '9'; ++num) {
+                        if (isValid(board, row, col, num)) {
+                            board[row][col] = num;  // Place the number
+                            if (solve(board)) {       // Continue solving
+                                return true;         // Solution found
+                            }
+                            board[row][col] = '.';    // Backtrack
+                        }
+                    }
+                    return false;  // No valid number found; trigger backtracking
+                }
+            }
+        }
+        return true;  // Solved the board
+    }
+
+    // Function to check if placing num on board[row][col] is valid
+    bool isValid(const vector<vector<char>>& board, int row, int col, char num) {
         // Check the row and column
         for (int i = 0; i < 9; ++i) {
             if (board[row][i] == num || board[i][col] == num) {
                 return false;
             }
         }
+
         // Check the 3x3 sub-box
-        int startRow = row - row % 3, startCol = col - col % 3;
+        int boxRowStart = row / 3 * 3;
+        int boxColStart = col / 3 * 3;
         for (int i = 0; i < 3; ++i) {
             for (int j = 0; j < 3; ++j) {
-                if (board[i + startRow][j + startCol] == num) {
+                if (board[boxRowStart + i][boxColStart + j] == num) {
                     return false;
                 }
             }
         }
-        return true;
-    }
 
-    // Backtracking function to solve the Sudoku
-    bool solve(std::vector<std::vector<char>>& board) {
-        for (int row = 0; row < 9; ++row) {
-            for (int col = 0; col < 9; ++col) {
-                // If we find an empty cell
-                if (board[row][col] == '.') {
-                    // Try digits from '1' to '9'
-                    for (char num = '1'; num <= '9'; ++num) {
-                        if (isValid(board, row, col, num)) {
-                            // Tentatively place the number
-                            board[row][col] = num;
-                            // Recursively try to fill in the next empty cell
-                            if (solve(board)) {
-                                return true;
-                            }
-                            // Undo the move (backtrack)
-                            board[row][col] = '.';
-                        }
-                    }
-                    return false; // Trigger backtracking
-                }
-            }
-        }
-        return true; // Solution found
+        return true;  // Valid placement
     }
 };
 
-// Example usage
 int main() {
-    Solution solution;
-    std::vector<std::vector<char>> board = {
+    vector<vector<char>> board = {
         {'5', '3', '.', '.', '7', '.', '.', '.', '.'},
         {'6', '.', '.', '1', '9', '5', '.', '.', '.'},
         {'.', '9', '8', '.', '.', '.', '.', '6', '.'},
@@ -72,14 +71,15 @@ int main() {
         {'.', '.', '.', '.', '8', '.', '.', '7', '9'}
     };
 
-    solution.solveSudoku(board);
+    Solution sol;
+    sol.solveSudoku(board);
 
-    // Print the solved Sudoku board
+    // Print solved Sudoku board
     for (const auto& row : board) {
         for (char num : row) {
-            std::cout << num << " ";
+            cout << num << " ";
         }
-        std::cout << std::endl;
+        cout << endl;
     }
 
     return 0;
