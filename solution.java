@@ -1,70 +1,61 @@
 ```java
 public class SudokuSolver {
-    // Method to solve the Sudoku puzzle by modifying the board in place
+    // Method to solve the Sudoku puzzle
     public void solveSudoku(char[][] board) {
-        // Attempt to solve the Sudoku puzzle
         solve(board);
     }
 
-    // Recursive method to solve the Sudoku, returns true if solved completely
+    // Helper method to recursively solve the Sudoku puzzle using backtracking
     private boolean solve(char[][] board) {
-        // Iterate through each cell in the 9x9 board
         for (int row = 0; row < 9; row++) {
             for (int col = 0; col < 9; col++) {
-                // If we find an empty cell represented by '.'
+                // If the cell is empty
                 if (board[row][col] == '.') {
-                    // Try placing digits 1-9 in the empty cell
-                    for (char num = '1'; num <= '9'; num++) {
-                        // Check if it's safe to place the number
-                        if (isSafe(board, row, col, num)) {
-                            board[row][col] = num; // Place the number
+                    // Try digits from 1 to 9
+                    for (char digit = '1'; digit <= '9'; digit++) {
+                        // Check if placing the digit here is valid
+                        if (isValid(board, row, col, digit)) {
+                            // Place the digit
+                            board[row][col] = digit;
                             
-                            // Recursively attempt to fill in the rest of the board
+                            // Recursively try to solve the rest of the board
                             if (solve(board)) {
-                                return true; // Return true if the board is completely solved
+                                return true;
                             }
-                            
-                            // Reset the cell if placing num didn't lead to a solution
-                            board[row][col] = '.'; // Backtrack
+                            // If it doesn't lead to a solution, reset the cell
+                            board[row][col] = '.';
                         }
                     }
-                    // If no valid number could be placed, return false to indicate failure
+                    // If no digit can be placed, return false
                     return false;
                 }
             }
         }
-        // If no empty cells are found, the board is fully solved
+        // If the board is completely filled, return true
         return true;
     }
 
-    // Method to check if it's safe to place a number in the given cell
-    private boolean isSafe(char[][] board, int row, int col, char num) {
-        // Check if the number is not present in the current row
-        for (int x = 0; x < 9; x++) {
-            if (board[row][x] == num) {
+    // Method to check if a digit can be placed in the given row and column
+    private boolean isValid(char[][] board, int row, int col, char digit) {
+        // Check the row and column for duplicates
+        for (int i = 0; i < 9; i++) {
+            if (board[row][i] == digit || board[i][col] == digit) {
                 return false;
             }
         }
 
-        // Check if the number is not present in the current column
-        for (int x = 0; x < 9; x++) {
-            if (board[x][col] == num) {
-                return false;
-            }
-        }
-
-        // Check if the number is not present in the current 3x3 sub-grid
+        // Check the 3x3 sub-box for duplicates
         int boxRowStart = row - row % 3;
         int boxColStart = col - col % 3;
         for (int r = 0; r < 3; r++) {
             for (int c = 0; c < 3; c++) {
-                if (board[r + boxRowStart][c + boxColStart] == num) {
+                if (board[r + boxRowStart][c + boxColStart] == digit) {
                     return false;
                 }
             }
         }
 
-        // Safe to place the number
+        // If no duplicates found, the placement is valid
         return true;
     }
 }
