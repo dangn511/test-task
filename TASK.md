@@ -1,4 +1,4 @@
-Language to use: Java
+Language to use: Python
 
 Write a program to solve a Sudoku puzzle by filling the empty cells.
 
