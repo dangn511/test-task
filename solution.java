@@ -1,120 +1,70 @@
 ```java
 public class SudokuSolver {
+    // Method to solve the Sudoku puzzle by modifying the board in place
     public void solveSudoku(char[][] board) {
-        if (solve(board)) {
-            // Board is successfully solved
-        }
+        // Attempt to solve the Sudoku puzzle
+        solve(board);
     }
 
+    // Recursive method to solve the Sudoku, returns true if solved completely
     private boolean solve(char[][] board) {
+        // Iterate through each cell in the 9x9 board
         for (int row = 0; row < 9; row++) {
             for (int col = 0; col < 9; col++) {
-                // Check if the cell is empty
+                // If we find an empty cell represented by '.'
                 if (board[row][col] == '.') {
-                    // Try digits 1-9
+                    // Try placing digits 1-9 in the empty cell
                     for (char num = '1'; num <= '9'; num++) {
-                        if (isValid(board, row, col, num)) {
-                            // Place the number temporarily
-                            board[row][col] = num;
-
-                            // Recursively try to solve with this number
+                        // Check if it's safe to place the number
+                        if (isSafe(board, row, col, num)) {
+                            board[row][col] = num; // Place the number
+                            
+                            // Recursively attempt to fill in the rest of the board
                             if (solve(board)) {
-                                return true;
+                                return true; // Return true if the board is completely solved
                             }
-
-                            // If it didn't lead to a solution, reset the cell
-                            board[row][col] = '.';
+                            
+                            // Reset the cell if placing num didn't lead to a solution
+                            board[row][col] = '.'; // Backtrack
                         }
                     }
-                    // If no number can be placed, return false
+                    // If no valid number could be placed, return false to indicate failure
                     return false;
                 }
             }
         }
-        // Validate the filled board
-        return isBoardValid(board);
+        // If no empty cells are found, the board is fully solved
+        return true;
     }
 
-    private boolean isValid(char[][] board, int row, int col, char num) {
-        // Check the row
-        for (int i = 0; i < 9; i++) {
-            if (board[row][i] == num) {
+    // Method to check if it's safe to place a number in the given cell
+    private boolean isSafe(char[][] board, int row, int col, char num) {
+        // Check if the number is not present in the current row
+        for (int x = 0; x < 9; x++) {
+            if (board[row][x] == num) {
                 return false;
             }
         }
 
-        // Check the column
-        for (int i = 0; i < 9; i++) {
-            if (board[i][col] == num) {
+        // Check if the number is not present in the current column
+        for (int x = 0; x < 9; x++) {
+            if (board[x][col] == num) {
                 return false;
             }
         }
 
-        // Check the 3x3 sub-box
-        int boxRow = row / 3 * 3;
-        int boxCol = col / 3 * 3;
-        for (int i = boxRow; i < boxRow + 3; i++) {
-            for (int j = boxCol; j < boxCol + 3; j++) {
-                if (board[i][j] == num) {
+        // Check if the number is not present in the current 3x3 sub-grid
+        int boxRowStart = row - row % 3;
+        int boxColStart = col - col % 3;
+        for (int r = 0; r < 3; r++) {
+            for (int c = 0; c < 3; c++) {
+                if (board[r + boxRowStart][c + boxColStart] == num) {
                     return false;
                 }
             }
         }
 
-        return true;
-    }
-
-    private boolean isBoardValid(char[][] board) {
-        // Check all rows, columns, and sub-boxes for validity
-        for (int i = 0; i < 9; i++) {
-            if (!isRowValid(board, i) || !isColumnValid(board, i) || !isSubBoxValid(board, i / 3 * 3, (i % 3) * 3)) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    private boolean isRowValid(char[][] board, int row) {
-        boolean[] seen = new boolean[9];
-        for (int col = 0; col < 9; col++) {
-            char num = board[row][col];
-            if (num != '.') {
-                if (seen[num - '1']) {
-                    return false; // Duplicate found
-                }
-                seen[num - '1'] = true;
-            }
-        }
-        return true;
-    }
-
-    private boolean isColumnValid(char[][] board, int col) {
-        boolean[] seen = new boolean[9];
-        for (int row = 0; row < 9; row++) {
-            char num = board[row][col];
-            if (num != '.') {
-                if (seen[num - '1']) {
-                    return false; // Duplicate found
-                }
-                seen[num - '1'] = true;
-            }
-        }
-        return true;
-    }
-
-    private boolean isSubBoxValid(char[][] board, int startRow, int startCol) {
-        boolean[] seen = new boolean[9];
-        for (int row = startRow; row < startRow + 3; row++) {
-            for (int col = startCol; col < startCol + 3; col++) {
-                char num = board[row][col];
-                if (num != '.') {
-                    if (seen[num - '1']) {
-                        return false; // Duplicate found
-                    }
-                    seen[num - '1'] = true;
-                }
-            }
-        }
+        // Safe to place the number
         return true;
     }
 }
