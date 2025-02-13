@@ -1,62 +1,66 @@
 ```java
 public class SudokuSolver {
-    // Method to solve the Sudoku puzzle
     public void solveSudoku(char[][] board) {
+        // Begin the solving process using backtracking
         solve(board);
     }
 
-    // Helper method to recursively solve the Sudoku puzzle using backtracking
     private boolean solve(char[][] board) {
+        // Iterate through each cell in the board
         for (int row = 0; row < 9; row++) {
             for (int col = 0; col < 9; col++) {
-                // If the cell is empty
+                // Check for an empty cell represented by '.'
                 if (board[row][col] == '.') {
-                    // Try digits from 1 to 9
-                    for (char digit = '1'; digit <= '9'; digit++) {
-                        // Check if placing the digit here is valid
-                        if (isValid(board, row, col, digit)) {
-                            // Place the digit
-                            board[row][col] = digit;
-                            
-                            // Recursively try to solve the rest of the board
+                    // Try numbers from 1 to 9
+                    for (char num = '1'; num <= '9'; num++) {
+                        // Check if placing num is valid
+                        if (isValid(board, row, col, num)) {
+                            // Place the number on the board
+                            board[row][col] = num;
+
+                            // Recursively attempt to solve the rest of the board
                             if (solve(board)) {
-                                return true;
+                                return true; // Found a solution
                             }
-                            // If it doesn't lead to a solution, reset the cell
+
+                            // If no solution, reset the cell
                             board[row][col] = '.';
                         }
                     }
-                    // If no digit can be placed, return false
-                    return false;
+                    return false; // No valid number found, backtrack
                 }
             }
         }
-        // If the board is completely filled, return true
-        return true;
+        return true; // Sudoku solved if no empty cells remain
     }
 
-    // Method to check if a digit can be placed in the given row and column
-    private boolean isValid(char[][] board, int row, int col, char digit) {
-        // Check the row and column for duplicates
-        for (int i = 0; i < 9; i++) {
-            if (board[row][i] == digit || board[i][col] == digit) {
-                return false;
+    private boolean isValid(char[][] board, int row, int col, char num) {
+        // Check if 'num' exists in the current row
+        for (int checkCol = 0; checkCol < 9; checkCol++) {
+            if (board[row][checkCol] == num) {
+                return false; // Duplicate found in the row
             }
         }
 
-        // Check the 3x3 sub-box for duplicates
-        int boxRowStart = row - row % 3;
-        int boxColStart = col - col % 3;
-        for (int r = 0; r < 3; r++) {
-            for (int c = 0; c < 3; c++) {
-                if (board[r + boxRowStart][c + boxColStart] == digit) {
-                    return false;
+        // Check if 'num' exists in the current column
+        for (int checkRow = 0; checkRow < 9; checkRow++) {
+            if (board[checkRow][col] == num) {
+                return false; // Duplicate found in the column
+            }
+        }
+
+        // Check if 'num' exists in the current 3x3 sub-box
+        int boxRowStart = (row / 3) * 3;
+        int boxColStart = (col / 3) * 3;
+        for (int r = boxRowStart; r < boxRowStart + 3; r++) {
+            for (int c = boxColStart; c < boxColStart + 3; c++) {
+                if (board[r][c] == num) {
+                    return false; // Duplicate found in the sub-box
                 }
             }
         }
 
-        // If no duplicates found, the placement is valid
-        return true;
+        return true; // 'num' can be placed safely
     }
 }
 ```
